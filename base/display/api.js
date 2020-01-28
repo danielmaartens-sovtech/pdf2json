@@ -374,7 +374,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      * finishes rendering (see RenderTask).
      */
     render: function PDFPageProxy_render(params) {
-      console.log("RENDER");         
+      
       var stats = this.stats;
       stats.time('Overall');
 
@@ -409,7 +409,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
       this.displayReadyPromise.then(
         function pageDisplayReadyPromise(transparency) {
           if (self.pendingDestroy) {
-            console.log("PAGE COMPLETE RENDERING");
+            
             complete();
             return;
           }
@@ -1096,7 +1096,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
     initalizeGraphics:
         function InternalRenderTask_initalizeGraphics(transparency) {
 
-      console.log("InternalRenderTask_initalizeGraphics");
+      
       if (this.cancelled) {
         return;
       }
@@ -1108,7 +1108,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
       }
 
       var params = this.params;
-      console.log("InternalRenderTask_initalizeGraphics => this.objs BEFORE this.objs.objs empty", this.objs);
+      
       Object.keys(this.objs.objs).forEach(key => {
            delete this.objs.objs[key]; 
       });
@@ -1131,7 +1131,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
     },
 
     operatorListChanged: function InternalRenderTask_operatorListChanged() {
-      console.log(`InternalRenderTask_operatorListChanged => GRAPHICS READY: ${!!this.graphicsReady}; STEPPER: ${this.stepper}; RUNNING: ${this.running}`)
+      
       if (!this.graphicsReady) {
         if (!this.graphicsReadyCallback) {
           this.graphicsReadyCallback = this._continue.bind(this);
@@ -1147,15 +1147,15 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
         return;
       }
       
-      console.log("InternalRenderTask_operatorListChanged => CONTINUING");
+      
       this._continue();
     },
 
     _continue: function InternalRenderTask__continue() {
-      console.log(`InternalRenderTask__continue => CANCELLED: ${this.cancelled}; params.continueCallback: ${!!this.params.continueCallback}`);
+      
       this.running = true;
       if (this.cancelled) {
-        console.log("CANCELLED");
+        
         return;
       }
       
@@ -1167,7 +1167,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
     },
 
     _next: function InternalRenderTask__next() {
-      console.log(`InternalRenderTask__next => this.operatorList: ${this.operatorList}; this.operatorList.lastChunk: ${!!this.operatorList.lastChunk}; this.operatorListIdx: ${this.operatorListIdx}`)
+      
       if (this.cancelled) {
         return;
       }
@@ -1176,7 +1176,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
                                         this._continue.bind(this),
                                         this.stepper);
       if (this.operatorListIdx === this.operatorList.argsArray.length) {
-        console.log("InternalRenderTask__next => setting running to false");
+        
         this.running = false;
         if (this.operatorList.lastChunk) {
           this.gfx.endDrawing();
