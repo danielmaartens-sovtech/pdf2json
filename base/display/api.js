@@ -1106,6 +1106,9 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
       }
 
       var params = this.params;
+      Object.keys(this.obj).forEach(key => {
+           delete this.obj[key]; 
+      });
       this.gfx = new CanvasGraphics(params.canvasContext, this.commonObjs,
                                     {}, params.textLayer,
                                     params.imageLayer);
