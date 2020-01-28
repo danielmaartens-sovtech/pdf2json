@@ -485,8 +485,11 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
       if (!this.pendingDestroy ||
           this.renderTasks.length !== 0 ||
           this.receivingOperatorList) {
+                 console.log("NOT DESTROYING PDFPAGEPROXY", this.pageInfo ? this.pageInfo : "");
         return;
       }
+               
+      console.log("DESTROYING PDFPAGEPROXY", this.pageInfo ? this.pageInfo : "");
 
       delete this.operatorList;
       delete this.displayReadyPromise;
