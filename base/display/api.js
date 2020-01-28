@@ -1107,6 +1107,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
       }
 
       var params = this.params;
+      console.log("InternalRenderTask_initalizeGraphics => this.objs BEFORE this.objs.objs empty", this.objs);
       Object.keys(this.objs.objs).forEach(key => {
            delete this.objs.objs[key]; 
       });
