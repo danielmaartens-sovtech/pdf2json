@@ -502,7 +502,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var i = executionStartIdx || 0;
       var argsArrayLen = argsArray.length;
 
-      console.log(`CanvasGraphics_executeOperatorList => continueCallback: ${!!continueCallback}; argsArrayLen: ${argsArrayLen}; argsArray: ${argsArray}; fnArray: ${fnArray}; i: ${i}`)
+      console.log(`CanvasGraphics_executeOperatorList => continueCallback: ${!!continueCallback}; i: ${i}`)
 
       // Sometimes the OperatorList to execute is empty.
       if (argsArrayLen == i) {
