@@ -409,6 +409,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
       this.displayReadyPromise.then(
         function pageDisplayReadyPromise(transparency) {
           if (self.pendingDestroy) {
+            console.log("PAGE COMPLETE RENDERING");
             complete();
             return;
           }
