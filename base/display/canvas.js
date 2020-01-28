@@ -502,7 +502,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var i = executionStartIdx || 0;
       var argsArrayLen = argsArray.length;
 
-      console.log(`CanvasGraphics_executeOperatorList => continueCallback: ${!!continueCallback}; i: ${i}`)
+      console.log(`CanvasGraphics_executeOperatorList => argsArrayLen: ${argsArrayLen}; continueCallback: ${!!continueCallback}; executionStartIdx: ${i}`)
 
       // Sometimes the OperatorList to execute is empty.
       if (argsArrayLen == i) {
@@ -522,10 +522,12 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         var opMode = true, noOpIdx = -1, noOpStartIdx = -1;
 
         while (true) {
-          console.log("CanvasGraphics_executeOperatorList => while loop.");
-          
+          console.log(`CanvasGraphics_executeOperatorList => while loop (i = ${i})`);
+          console.log(`CanvasGraphics_executeOperatorList => stepper: ${!!stepper}; stepper.nextBreakPoint: ${!!stepper ? stepper.nextBreakPoint : "n/a"}`);
+
           try {
             if (stepper && i === stepper.nextBreakPoint) {
+              console.log("stepper.breakIt")
               stepper.breakIt(i, continueCallback);
               return i;
             }
@@ -533,6 +535,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
             fnId = fnArray[i];
 
             if (fnId !== OPS.dependency) {
+              console.log("CanvasGraphics_executeOperatorList => fnId !== OPS.dependency");
 //MQZ.Mar.22 Disabled Operators within specified ranages
               noOpIdx = NO_OPS_RANGE.indexOf(fnId);
               if (opMode) {
@@ -1046,6 +1049,8 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     showText: function CanvasGraphics_showText(glyphs, skipTextSelection) {
+      console.log("CanvasGraphics_showText", glyphs)
+
       var ctx = this.ctx;
       var current = this.current;
       var font = current.font;
@@ -1259,6 +1264,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       return canvasWidth;
     },
     showSpacedText: function CanvasGraphics_showSpacedText(arr) {
+      console.log("CanvasGraphics_showSpacedText", arr)
       var ctx = this.ctx;
       var current = this.current;
       var font = current.font;
