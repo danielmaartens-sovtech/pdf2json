@@ -374,6 +374,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      * finishes rendering (see RenderTask).
      */
     render: function PDFPageProxy_render(params) {
+      console.log("RENDER");         
       var stats = this.stats;
       stats.time('Overall');
 
@@ -412,7 +413,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
             return;
           }
           stats.time('Rendering');
-//           internalRenderTask.initalizeGraphics(transparency);
+          internalRenderTask.initalizeGraphics(transparency);
           internalRenderTask.operatorListChanged();
         },
         function pageDisplayReadPromiseError(reason) {
@@ -1106,7 +1107,7 @@ var InternalRenderTask = (function InternalRenderTaskClosure() {
 
       var params = this.params;
       this.gfx = new CanvasGraphics(params.canvasContext, this.commonObjs,
-                                    this.objs, params.textLayer,
+                                    {}, params.textLayer,
                                     params.imageLayer);
 
       this.gfx.beginDrawing(params.viewport, transparency);
