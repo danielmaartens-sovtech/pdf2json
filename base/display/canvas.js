@@ -464,6 +464,9 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       // backdrop. The problem with a transparent backdrop though is we then
       // don't get sub pixel anti aliasing on text, so we fill with white if
       // we can.
+      
+      console.log("CanvasGraphics_beginDrawing");
+      
       var width = this.ctx.canvas.width;
       var height = this.ctx.canvas.height;
       if (transparency) {
@@ -493,90 +496,99 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
                                     operatorList,
                                     executionStartIdx, continueCallback,
                                     stepper) {
+      
       var argsArray = operatorList.argsArray;
       var fnArray = operatorList.fnArray;
       var i = executionStartIdx || 0;
       var argsArrayLen = argsArray.length;
 
+      console.log(`CanvasGraphics_executeOperatorList => continueCallback: ${!!continueCallback}; argsArrayLen: ${argsArrayLen}; argsArray: ${argsArray}; fnArray: ${fnArray}; i: ${i}`)
+
       // Sometimes the OperatorList to execute is empty.
       if (argsArrayLen == i) {
         return i;
       }
+      
+        var executionEndIdx;
+        var endTime = Date.now() + EXECUTION_TIME;
 
-      var executionEndIdx;
-      var endTime = Date.now() + EXECUTION_TIME;
+        var commonObjs = this.commonObjs;
+        var objs = this.objs;
+        var fnId;
 
-      var commonObjs = this.commonObjs;
-      var objs = this.objs;
-      var fnId;
+        console.log("CanvasGraphics_executeOperatorList => objs", objs);
 
 //MQZ.Mar.22 Disabled Operators
-      var opMode = true, noOpIdx = -1, noOpStartIdx = -1;
+        var opMode = true, noOpIdx = -1, noOpStartIdx = -1;
 
-      while (true) {
-        if (stepper && i === stepper.nextBreakPoint) {
-          stepper.breakIt(i, continueCallback);
-          return i;
-        }
+        while (true) {
+          console.log("CanvasGraphics_executeOperatorList => while loop.");
+          
+          try {
+            if (stepper && i === stepper.nextBreakPoint) {
+              stepper.breakIt(i, continueCallback);
+              return i;
+            }
 
-        fnId = fnArray[i];
+            fnId = fnArray[i];
 
-        if (fnId !== OPS.dependency) {
+            if (fnId !== OPS.dependency) {
 //MQZ.Mar.22 Disabled Operators within specified ranages
-          noOpIdx = NO_OPS_RANGE.indexOf(fnId);
-          if (opMode) {
-             if (noOpIdx >= 0) {
-               opMode = false;
-               noOpStartIdx = noOpIdx;
-               info("NO_OP Begin: " + this[fnId].name + " - " + i);
-             }
-             else if (NO_OPS.indexOf(fnId) < 0) {
-               this[fnId].apply(this, argsArray[i]);
-             }
-          }
-          else {
-             if (noOpIdx >= 0 && noOpIdx === (noOpStartIdx+1)) {
-               opMode = true;
-               noOpStartIdx = -1;
-               info("NO_OP End: " + this[fnId].name + " - " + i);
-             }
-          }
-        } else {
-          var deps = argsArray[i];
-          for (var n = 0, nn = deps.length; n < nn; n++) {
-            var depObjId = deps[n];
-            var common = depObjId.substring(0, 2) == 'g_';
+              noOpIdx = NO_OPS_RANGE.indexOf(fnId);
+              if (opMode) {
+                if (noOpIdx >= 0) {
+                  opMode = false;
+                  noOpStartIdx = noOpIdx;
+                  info("NO_OP Begin: " + this[fnId].name + " - " + i);
+                } else if (NO_OPS.indexOf(fnId) < 0) {
+                  this[fnId].apply(this, argsArray[i]);
+                }
+              } else {
+                if (noOpIdx >= 0 && noOpIdx === (noOpStartIdx + 1)) {
+                  opMode = true;
+                  noOpStartIdx = -1;
+                  info("NO_OP End: " + this[fnId].name + " - " + i);
+                }
+              }
+            } else {
+              var deps = argsArray[i];
+              for (var n = 0, nn = deps.length; n < nn; n++) {
+                var depObjId = deps[n];
+                var common = depObjId.substring(0, 2) == 'g_';
 
-            // If the promise isn't resolved yet, add the continueCallback
-            // to the promise and bail out.
-            if (!common && !objs.isResolved(depObjId)) {
-              objs.get(depObjId, continueCallback);
+                // If the promise isn't resolved yet, add the continueCallback
+                // to the promise and bail out.
+                if (!common && !objs.isResolved(depObjId)) {
+                  objs.get(depObjId, continueCallback);
+                  return i;
+                }
+                if (common && !commonObjs.isResolved(depObjId)) {
+                  commonObjs.get(depObjId, continueCallback);
+                  return i;
+                }
+              }
+            }
+
+            i++;
+
+            // If the entire operatorList was executed, stop as were done.
+            if (i == argsArrayLen) {
               return i;
             }
-            if (common && !commonObjs.isResolved(depObjId)) {
-              commonObjs.get(depObjId, continueCallback);
+
+            // If the execution took longer then a certain amount of time, schedule
+            // to continue exeution after a short delay.
+            // However, this is only possible if a 'continueCallback' is passed in.
+            if (continueCallback && Date.now() > endTime) {
+              setTimeout(continueCallback, 0);
               return i;
             }
+          } catch(error) {
+            console.log("ERROR CanvasGraphics_executeOperatorList", error, error.stack);
           }
-        }
 
-        i++;
-
-        // If the entire operatorList was executed, stop as were done.
-        if (i == argsArrayLen) {
-          return i;
-        }
-
-        // If the execution took longer then a certain amount of time, schedule
-        // to continue exeution after a short delay.
-        // However, this is only possible if a 'continueCallback' is passed in.
-        if (continueCallback && Date.now() > endTime) {
-          setTimeout(continueCallback, 0);
-          return i;
-        }
-
-        // If the operatorList isn't executed completely yet OR the execution
-        // time was short enough, do another execution round.
+          // If the operatorList isn't executed completely yet OR the execution
+          // time was short enough, do another execution round.
       }
     },
 
