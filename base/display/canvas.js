@@ -412,7 +412,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
   }
 
   function putBinaryImageData(ctx, imgData) {
-    console.log("CanvasGraphicsClosure => putBinaryImageData");
+    
     if (typeof ImageData !== 'undefined' && imgData instanceof ImageData) {
       ctx.putImageData(imgData, 0, 0);
       return;
@@ -466,7 +466,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       // don't get sub pixel anti aliasing on text, so we fill with white if
       // we can.
       
-      console.log("CanvasGraphics_beginDrawing");
+      
       
       var width = this.ctx.canvas.width;
       var height = this.ctx.canvas.height;
@@ -503,7 +503,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       var i = executionStartIdx || 0;
       var argsArrayLen = argsArray.length;
 
-      console.log(`CanvasGraphics_executeOperatorList => argsArrayLen: ${argsArrayLen}; continueCallback: ${!!continueCallback}; executionStartIdx: ${i}`)
+      
 
       // Sometimes the OperatorList to execute is empty.
       if (argsArrayLen == i) {
@@ -517,18 +517,18 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
         var objs = this.objs;
         var fnId;
 
-        console.log("CanvasGraphics_executeOperatorList => objs", objs);
+        
 
 //MQZ.Mar.22 Disabled Operators
         var opMode = true, noOpIdx = -1, noOpStartIdx = -1;
 
         while (true) {
-          console.log(`CanvasGraphics_executeOperatorList => while loop (i = ${i})`);
-          console.log(`CanvasGraphics_executeOperatorList => stepper: ${!!stepper}; stepper.nextBreakPoint: ${!!stepper ? stepper.nextBreakPoint : "n/a"}`);
+          
+          
 
           try {
             if (stepper && i === stepper.nextBreakPoint) {
-              console.log("CanvasGraphics_executeOperatorList => stepper.breakIt")
+              
               stepper.breakIt(i, continueCallback);
               return i;
             }
@@ -536,27 +536,27 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
             fnId = fnArray[i];
 
             if (fnId !== OPS.dependency) {
-              console.log("CanvasGraphics_executeOperatorList => fnId !== OPS.dependency");
+              
 //MQZ.Mar.22 Disabled Operators within specified ranages
-              console.log(`NO_OPS_RANGE`, NO_OPS_RANGE);
+              
               noOpIdx = NO_OPS_RANGE.indexOf(fnId);
-              console.log(`CanvasGraphics_executeOperatorList => noOpIdx: ${noOpIdx}`)
+              
               if (opMode) {
                 if (noOpIdx >= 0) {
                   opMode = false;
                   noOpStartIdx = noOpIdx;
-                  console.log("CanvasGraphics_executeOperatorList => NO_OP Begin: " + this[fnId].name + " - " + i)
+                  
                   info("NO_OP Begin: " + this[fnId].name + " - " + i);
                 } else if (NO_OPS.indexOf(fnId) < 0) {
-                  console.log(`CanvasGraphics_executeOperatorList => Applying function with fnId ${fnId} to`, argsArray[i]);
-                  console.log(`NO_OPS`, NO_OPS);
+                  
+                  
                   this[fnId].apply(this, argsArray[i]);
                 }
               } else {
                 if (noOpIdx >= 0 && noOpIdx === (noOpStartIdx + 1)) {
                   opMode = true;
                   noOpStartIdx = -1;
-                  console.log("CanvasGraphics_executeOperatorList => NO_OP End: " + this[fnId].name + " - " + i);
+                  
                   info("NO_OP End: " + this[fnId].name + " - " + i);
                 }
               }
@@ -564,18 +564,18 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
               var deps = argsArray[i];
               for (var n = 0, nn = deps.length; n < nn; n++) {
                 var depObjId = deps[n];
-                console.log("CanvasGraphics_executeOperatorList => depObjId", depObjId)
+                
                 var common = depObjId.substring(0, 2) == 'g_';
 
                 // If the promise isn't resolved yet, add the continueCallback
                 // to the promise and bail out.
                 if (objs.objs[depObjId] && !common && !objs.isResolved(depObjId)) {
-                  console.log("CanvasGraphics_executeOperatorList => !common && !objs.isResolved(depObjId)")
+                  
                   objs.get(depObjId, continueCallback);
                   return i;
                 }
                 if (common && !commonObjs.isResolved(depObjId)) {
-                  console.log("CanvasGraphics_executeOperatorList => common && !commonObjs.isResolved(depObjId)")
+                  
                   commonObjs.get(depObjId, continueCallback);
                   return i;
                 }
@@ -586,7 +586,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
             // If the entire operatorList was executed, stop as were done.
             if (i == argsArrayLen) {
-              console.log("CanvasGraphics_executeOperatorList => DONE")
+              
               return i;
             }
 
@@ -594,12 +594,12 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
             // to continue exeution after a short delay.
             // However, this is only possible if a 'continueCallback' is passed in.
             if (continueCallback && Date.now() > endTime) {
-              console.log("CanvasGraphics_executeOperatorList => If the execution took longer then a certain amount of time, schedule to continue exeution after a short delay")
+              
               setTimeout(continueCallback, 0);
               return i;
             }
           } catch(error) {
-            console.log("ERROR CanvasGraphics_executeOperatorList", error, error.stack);
+            
           }
 
           // If the operatorList isn't executed completely yet OR the execution
@@ -1061,7 +1061,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
     },
 
     showText: function CanvasGraphics_showText(glyphs, skipTextSelection) {
-      console.log("CanvasGraphics_showText", glyphs)
+      
 
       var ctx = this.ctx;
       var current = this.current;
@@ -1276,7 +1276,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
       return canvasWidth;
     },
     showSpacedText: function CanvasGraphics_showSpacedText(arr) {
-      console.log("CanvasGraphics_showSpacedText", arr)
+      
       var ctx = this.ctx;
       var current = this.current;
       var font = current.font;
