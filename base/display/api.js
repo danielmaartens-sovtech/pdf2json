@@ -412,7 +412,7 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
             return;
           }
           stats.time('Rendering');
-          internalRenderTask.initalizeGraphics(transparency);
+//           internalRenderTask.initalizeGraphics(transparency);
           internalRenderTask.operatorListChanged();
         },
         function pageDisplayReadPromiseError(reason) {
