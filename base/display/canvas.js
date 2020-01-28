@@ -569,7 +569,7 @@ var CanvasGraphics = (function CanvasGraphicsClosure() {
 
                 // If the promise isn't resolved yet, add the continueCallback
                 // to the promise and bail out.
-                if (!common && !objs.isResolved(depObjId)) {
+                if (objs.objs[depObjId] && !common && !objs.isResolved(depObjId)) {
                   console.log("CanvasGraphics_executeOperatorList => !common && !objs.isResolved(depObjId)")
                   objs.get(depObjId, continueCallback);
                   return i;
